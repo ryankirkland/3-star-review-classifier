@@ -1,9 +1,10 @@
 from bs4 import BeautifulSoup
 import requests
 import time
+import sys
 
 
-def reviews_scraper(asin_list)
+def reviews_scraper(asin_list, filename)
     '''
     Takes a list of asins, retrieves html for reviews page, and parses out key data points
     Parameters
@@ -19,6 +20,7 @@ reviews = []
 headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0", "Accept-Encoding":"gzip, deflate", "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "DNT":"1","Connection":"close", "Upgrade-Insecure-Requests":"1"}
 
 for asin in asin_list:
+    print(f'Collecting reviews for {asin}')
     passed_last_page = None
     counter = 1
     while passed_last_page == None:
@@ -83,5 +85,11 @@ for asin in asin_list:
     
 reviews_df = pd.DataFrame(reviews, columns=['asin','product','date', 'verified', 'title', 'desc', 'reviewer_name', 'rating'])
 
+reviews_df.to_csv(filename)
+
+print(f'{len(reviews)} reviews for {len(asinlist)} asins stored successfully in {filename}')
+
 return reviews, reviews_df
 
+if __name__ == '__main__':
+    reviews_scraper(*sys.argv[1:])
