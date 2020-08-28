@@ -1,4 +1,6 @@
 import re
+import sys
+import pandas as pd
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -6,6 +8,18 @@ from nltk.stem.wordnet import WordNetLemmatizer
 
 wordnet = WordNetLemmatizer()
 nltk.download('stopwords')
+
+def cleaned_reviews_dataframe(filename):
+    print('loading customer reviews dataframe')
+    reviews_df = pd.read_csv(f'data/reviews/{filename}')
+    print('cleaning customer reviews dataframe')
+    reviews_df['title'] = reviews_df['title'].str.replace('\n', '')
+    reviews_df['desc'] = reviews_df['desc'].str.replace('\n','')
+    reviews_df['title_desc'] = reviews_df['title'] + reviews_df['desc']
+    if 'Unnamed: 0' in set(reviews_df.columns):
+        reviews_df = reviews_df.drop('Unnamed: 0', axis=1)
+    print('cleaning complete, moving to nlp preprocessing')
+    return reviews_df
 
 def remove_punc(string:str) -> str:
     '''Given a string, removes all punctuation and returned punctuation-less string'''
@@ -53,9 +67,25 @@ def preprocess_corpus(content):
     '''
     preprocessed = []
     for i in range(len(content)):
+        print('removing punctuation')
         step_1 = remove_punc(content[i].lower())
+        print('tokenizing')
         step_2 = tokenize(step_1)
+        print('lemmatizing')
         step_3 = lemmatize(step_2)
+        print('removing stop words')
         step_4 = rm_stop_words(step_3)
         preprocessed.append(step_4)
     return preprocessed
+
+def create_str_desc(cleaned_desc, filename):
+    print('creating preprocessed column for nlp and review classification')
+    str_desc = [" ".join(x) for x in cleaned_desc]
+    df['str_desc'] = str_desc
+    df.to_csv(f'data/preprocessed_reviews/preprocessed_{filename}')
+    return df
+
+if __name__ == '__main__':
+    df = cleaned_reviews_dataframe(*sys.argv[1:])
+    cleaned_desc = preprocess_corpus(df['title_desc'])
+    create_str_desc(cleaned_desc, *sys.argv[1:])
