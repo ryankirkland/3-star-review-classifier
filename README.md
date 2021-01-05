@@ -52,7 +52,7 @@ After moving forward with Random Forest, thresholds for probability of a review 
   <img src='https://github.com/ryankirkland/review-content-analysis/blob/master/img/profit_curve.png' width=49%>
 </div
 
-A second threshold was determined, surprisingly at the default 0.5, for classification to be input into the NLP pipeline. Due to the sheer volume of 5-star reviews in this case, it is far more likely that false negatives would heavily sway the results of latent topic discovery, where false negatives would more likely be buried under the weight of true positives when analyzing the review content.
+A second threshold was determined, surprisingly at the default 0.5, for classification to be input into the NLP pipeline. Due to the sheer volume of 5-star reviews in this case, it is far more likely that false negatives would heavily sway the results of latent topic discovery, where false positives would more likely be buried under the weight of true positives when analyzing the review content.
 
 - <b> Confusion Matrix for NLP Feed: </b>
 
